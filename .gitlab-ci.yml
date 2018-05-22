@@ -19,7 +19,6 @@ cache:
     - make install
     - cd work.$(hostname)/$(make show-var VARNAME=DISTNAME)
     - make test
-    - mv doc/doxygen-html ${CI_PROJECT_DIR}
 
 robotpkg-pinocchio-14.04-release:
   <<: *robotpkg-pinocchio
