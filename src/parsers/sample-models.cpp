@@ -90,12 +90,12 @@ namespace se3
       // root
       if(! usingFF )
       {
-        addJointAndBody(model, JointModelRX(), "universe", "ff1", Id, false);
-        addJointAndBody(model, JointModelRY(), "ff1_joint", "ff2", Id, false);
-        addJointAndBody(model, JointModelRZ(), "ff2_joint", "ff3", Id, false);
-        addJointAndBody(model, JointModelRZ(), "ff3_joint", "ff4", Id, false);
-        addJointAndBody(model, JointModelRY(), "ff4_joint", "ff5", Id, false);
-        addJointAndBody(model, JointModelRX(), "ff5_joint", "root", Id, false);
+        addJointAndBody(model, JointModelPX(), "universe", "ff1", Id, true);
+        addJointAndBody(model, JointModelPY(), "ff1_joint", "ff2", Id, true);
+        addJointAndBody(model, JointModelPZ(), "ff2_joint", "ff3", Id, true);
+        addJointAndBody(model, JointModelRZ(), "ff3_joint", "ff4", Id, true);
+        addJointAndBody(model, JointModelRY(), "ff4_joint", "ff5", Id, true);
+        addJointAndBody(model, JointModelRX(), "ff5_joint", "root", Id, true);
       }
       else
         addJointAndBody(model, JointModelFreeFlyer(), "universe", "root", Id, false);
