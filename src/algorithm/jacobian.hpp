@@ -64,7 +64,7 @@ namespace se3
   computeJacobians(const Model & model,
                    Data & data,
                    const Eigen::VectorXd & q)
-  { return computeJointJacobians(model,data,q); }
+  { return computeJointJacobians(model,data,q.derived()); }
   
   ///
   /// \brief Computes the full model Jacobian, i.e. the stack of all motion subspace expressed in the world frame.
@@ -214,7 +214,7 @@ namespace se3
                        const Eigen::VectorXd & q,
                        const Model::JointIndex jointId,
                        Data::Matrix6x & J)
-  { jointJacobian(model,data,q,jointId,J); }
+  { jointJacobian(model,data,q.derived(),jointId,J); }
   
   ///
   /// \brief Computes the Jacobian of a specific joint frame expressed in the local frame of the joint. The result is stored in data.J.
@@ -234,7 +234,7 @@ namespace se3
                 const Model::JointIndex jointId)
   {
     data.J.setZero();
-    jacobian(model,data,q,jointId,data.J);
+    jacobian(model,data,q.derived(),jointId,data.J);
     
     return data.J;
   }

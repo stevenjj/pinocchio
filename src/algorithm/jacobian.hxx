@@ -46,10 +46,10 @@ namespace se3
     {
       typedef typename Model::JointIndex JointIndex;
       
-      const JointIndex & i = (JointIndex) jmodel.id();
+      const JointIndex & i = jmodel.id();
       const JointIndex & parent = model.parents[i];
       
-      jmodel.calc(jdata.derived(),q);
+      jmodel.calc(jdata.derived(),q.derived());
       
       data.liMi[i] = model.jointPlacements[i]*jdata.M();
       if(parent>0) data.oMi[i] = data.oMi[parent]*data.liMi[i];
@@ -76,7 +76,7 @@ namespace se3
     for(JointIndex i=1; i<(JointIndex) model.njoints; ++i)
     {
       Pass::run(model.joints[i],data.joints[i],
-                typename Pass::ArgsType(model,data,q));
+                typename Pass::ArgsType(model,data,q.derived()));
     }
   
     return data.J;
@@ -176,7 +176,7 @@ namespace se3
       const JointIndex & i = jmodel.id();
       const JointIndex & parent = model.parents[i];
       
-      jmodel.calc(jdata.derived(),q);
+      jmodel.calc(jdata.derived(),q.derived());
       
       data.liMi[i] = model.jointPlacements[i]*jdata.M();
       data.iMf[parent] = data.liMi[i]*data.iMf[i];
@@ -239,7 +239,7 @@ namespace se3
       SE3 & oMi = data.oMi[i];
       Motion & vJ = data.v[i];
       
-      jmodel.calc(jdata.derived(),q,v);
+      jmodel.calc(jdata.derived(),q.derived(),v.derived());
       
       vJ = jdata.v();
       
@@ -286,7 +286,7 @@ namespace se3
     for(JointIndex i=1; i<(JointIndex)model.njoints; ++i)
     {
       Pass::run(model.joints[i],data.joints[i],
-                typename Pass::ArgsType(model,data,q,v));
+                typename Pass::ArgsType(model,data,q.derived(),v.derived()));
     }
     
     return data.dJ;
