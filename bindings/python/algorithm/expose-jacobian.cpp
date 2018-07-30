@@ -67,14 +67,18 @@ namespace se3
   
     void exposeJacobian()
     {
-      bp::def("computeJointJacobians",(const Data::Matrix6x &(*)(const Model &, Data &, const Eigen::VectorXd &))&computeJointJacobians,
+      using namespace Eigen;
+      
+      bp::def("computeJointJacobians",
+              &computeJointJacobians<JointCollectionDefault,VectorXd>,
               bp::args("Model","Data",
                        "Joint configuration q (size Model::nq)"),
               "Computes the full model Jacobian, i.e. the stack of all motion subspace expressed in the world frame.\n"
               "The result is accessible through data.J. This function computes also the forwardKinematics of the model.",
               bp::return_value_policy<bp::return_by_value>());
       
-      bp::def("computeJointJacobians",(const Data::Matrix6x &(*)(const Model &, Data &))&computeJointJacobians,
+      bp::def("computeJointJacobians",
+              &computeJointJacobians<JointCollectionDefault>,
               bp::args("Model","Data"),
               "Computes the full model Jacobian, i.e. the stack of all motion subspace expressed in the world frame.\n"
               "The result is accessible through data.J. This function assumes that forwardKinematics has been called before",
@@ -98,7 +102,7 @@ namespace se3
               "Computes the jacobian of a given given joint according to the given entries in data."
               "If rf is set to LOCAL, it returns the jacobian associated to the joint frame. Otherwise, it returns the jacobian of the frame coinciding with the world frame.");
       
-      bp::def("computeJointJacobiansTimeVariation",computeJointJacobiansTimeVariation,
+      bp::def("computeJointJacobiansTimeVariation",computeJointJacobiansTimeVariation<JointCollectionDefault,VectorXd,VectorXd>,
               bp::args("Model","Data",
                        "Joint configuration q (size Model::nq)",
                        "Joint velocity v (size Model::nv)"),
