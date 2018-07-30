@@ -49,14 +49,15 @@ namespace se3
     
     void exposeFramesAlgo()
     {
+      using namespace Eigen;
       bp::def("framesKinematics",
-              (void (*)(const Model &, Data &))&framesForwardKinematics,
+              &framesForwardKinematics<JointCollectionDefault>,
               bp::args("Model","Data"),
               "Computes the placements of all the operational frames according to the current joint placement stored in data"
               "and put the results in data.");
       
       bp::def("framesKinematics",
-              (void (*)(const Model &, Data &, const Eigen::VectorXd &))&framesForwardKinematics,
+              &framesForwardKinematics<JointCollectionDefault,VectorXd>,
               bp::args("Model","Data",
                        "Configuration q (size Model::nq)"),
               "Update first the placement of the joints according to the given configuration value."
@@ -64,7 +65,7 @@ namespace se3
               "and put the results in data.");
       
       bp::def("frameJacobian",
-              (Data::Matrix6x (*)(const Model &, Data &, const Eigen::VectorXd &, const Model::FrameIndex, ReferenceFrame))&frame_jacobian_proxy,
+              &frame_jacobian_proxy,
               bp::args("Model","Data",
                        "Configuration q (size Model::nq)",
                        "Operational frame ID (int)",
@@ -75,7 +76,7 @@ namespace se3
               "where v is the time derivative of the configuration q.");
       
       bp::def("getFrameJacobian",
-              (Data::Matrix6x (*)(const Model &, Data &, const Model::FrameIndex, ReferenceFrame))&get_frame_jacobian_proxy,
+              &get_frame_jacobian_proxy,
               bp::args("Model","Data",
                        "Operational frame ID (int)",
                        "Reference frame rf (either ReferenceFrame.LOCAL or ReferenceFrame.WORLD)"),

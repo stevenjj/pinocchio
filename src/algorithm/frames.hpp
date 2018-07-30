@@ -25,27 +25,34 @@ namespace se3
 {
 
   /**
-   * @brief      Updates the position of each frame contained in the model
+   * @brief      Updates the position of each frame contained in the model.
+   *
+   * @tparam JointCollection Collection of Joint types.
    *
    * @param[in]  model  The kinematic model.
    * @param      data   Data associated to model.
    *
    * @warning    One of the algorithms forwardKinematics should have been called first
    */
-  inline void framesForwardKinematics(const Model & model,
-                                      Data & data);
+  template<typename JointCollection>
+  inline void framesForwardKinematics(const ModelTpl<JointCollection> & model,
+                                      DataTpl<JointCollection> & data);
 
   /**
    * @brief      First calls the forwardKinematics on the model, then computes the placement of each frame.
-   *             /sa se3::forwardKinematics
+   *             /sa se3::forwardKinematics.
+   *
+   * @tparam JointCollection Collection of Joint types.
+   * @tparam ConfigVectorType Type of the joint configuration vector.
    *
    * @param[in]  model                    The kinematic model.
    * @param      data                     Data associated to model.
    * @param[in]  q                        Configuration vector.
    */
-  inline void framesForwardKinematics(const Model & model,
-                                      Data & data,
-                                      const Eigen::VectorXd & q);
+  template<typename JointCollection, typename ConfigVectorType>
+  inline void framesForwardKinematics(const ModelTpl<JointCollection> & model,
+                                      DataTpl<JointCollection> & data,
+                                      const Eigen::MatrixBase<ConfigVectorType> & q);
 
   /**
    * @brief      Returns the jacobian of the frame expresssed either expressed in the LOCAL frame coordinate system or in the WORLD coordinate system,
@@ -56,6 +63,9 @@ namespace se3
    *             in the local coordinates of the frame, or if rl == WORDL, it returns the Jacobian expressed of the point coincident with the origin
    *             and expressed in a coordinate system aligned with the WORLD.
    *
+   * @tparam JointCollection Collection of Joint types.
+   * @tparam Matrix6xLike Type of the matrix containing the joint Jacobian.
+   *
    * @param[in]  model       The kinematic model
    * @param[in]  data        Data associated to model
    * @param[in]  frame_id    Id of the operational Frame
@@ -64,11 +74,12 @@ namespace se3
    *
    * @warning    The function se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
    */
-  void getFrameJacobian(const Model & model,
-                        const Data & data,
-                        const Model::FrameIndex frame_id,
-                        const ReferenceFrame rf,
-                        Data::Matrix6x & J);
+  template<typename JointCollection, typename Matrix6xLike>
+  inline void getFrameJacobian(const ModelTpl<JointCollection> & model,
+                               const DataTpl<JointCollection> & data,
+                               const typename ModelTpl<JointCollection>::FrameIndex frame_id,
+                               const ReferenceFrame rf,
+                               const Eigen::MatrixBase<Matrix6xLike> & J);
   
   /**
    * @brief      Returns the jacobian of the frame expresssed either expressed in the LOCAL frame coordinate system or in the WORLD coordinate system,
@@ -90,6 +101,7 @@ namespace se3
    * @warning    The function se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
    */
   template<ReferenceFrame rf>
+  PINOCCHIO_DEPRECATED
   void getFrameJacobian(const Model & model,
                         const Data & data,
                         const Model::FrameIndex frame_id,
@@ -100,6 +112,9 @@ namespace se3
    * @brief      Returns the jacobian of the frame expresssed in the LOCAL coordinate system of the frame.
    *             You must first call se3::computeJointJacobians followed by se3::framesForwardKinematics to update placement values in data structure.
    *
+   * @tparam JointCollection Collection of Joint types.
+   * @tparam Matrix6xLike Type of the matrix containing the joint Jacobian.
+   *
    * @param[in]  model       The kinematic model
    * @param[in]  data        Data associated to model
    * @param[in]  frame_id    Id of the operational Frame
@@ -107,11 +122,11 @@ namespace se3
    *
    * @warning    The function se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
    */
-   
-  inline void getFrameJacobian(const Model & model,
-                               const Data & data,
-                               const Model::FrameIndex frame_id,
-                               Data::Matrix6x & J);
+  template<typename JointCollection, typename Matrix6xLike>
+  inline void getFrameJacobian(const ModelTpl<JointCollection> & model,
+                               const DataTpl<JointCollection> & data,
+                               const typename ModelTpl<JointCollection>::FrameIndex frame_id,
+                               const Eigen::MatrixBase<Matrix6xLike> & J);
  
 } // namespace se3
 

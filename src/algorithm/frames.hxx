@@ -26,17 +26,22 @@ namespace se3
 {
   
   
-  inline void framesForwardKinematics(const Model & model,
-                                      Data & data)
+  template<typename JointCollection>
+  inline void framesForwardKinematics(const ModelTpl<JointCollection> & model,
+                                      DataTpl<JointCollection> & data)
   {
     assert(model.check(data) && "data is not consistent with model.");
     
+    typedef ModelTpl<JointCollection> Model;
+    typedef typename Model::FrameIndex FrameIndex;
+    typedef typename Model::JointIndex JointIndex;
+    
     // The following for loop starts by index 1 because the first frame is fixed
     // and corresponds to the universe.s
-    for (Model::FrameIndex i=1; i < (Model::FrameIndex) model.nframes; ++i)
+    for (FrameIndex i=1; i < (FrameIndex) model.nframes; ++i)
     {
       const Frame & frame = model.frames[i];
-      const Model::JointIndex & parent = frame.parent;
+      const JointIndex & parent = frame.parent;
       if (frame.placement.isIdentity())
         data.oMf[i] = data.oMi[parent];
       else
@@ -44,9 +49,10 @@ namespace se3
     }
   }
   
-  inline void framesForwardKinematics(const Model & model,
-                                      Data & data,
-                                      const Eigen::VectorXd & q)
+  template<typename JointCollection, typename ConfigVectorType>
+  inline void framesForwardKinematics(const ModelTpl<JointCollection> & model,
+                                      DataTpl<JointCollection> & data,
+                                      const Eigen::MatrixBase<ConfigVectorType> & q)
   {
     assert(model.check(data) && "data is not consistent with model.");
     
@@ -54,43 +60,51 @@ namespace se3
     framesForwardKinematics(model, data);
   }
   
-  inline void getFrameJacobian(const Model & model,
-                               const Data & data,
-                               const Model::FrameIndex frame_id,
+  template<typename JointCollection, typename Matrix6xLike>
+  inline void getFrameJacobian(const ModelTpl<JointCollection> & model,
+                               const DataTpl<JointCollection> & data,
+                               const typename ModelTpl<JointCollection>::FrameIndex frame_id,
                                const ReferenceFrame rf,
-                               Data::Matrix6x & J)
+                               const Eigen::MatrixBase<Matrix6xLike> & J)
   {
+    assert(J.rows() == 6);
     assert(J.cols() == model.nv);
     assert(data.J.cols() == model.nv);
     assert(model.check(data) && "data is not consistent with model.");
     
+    typedef ModelTpl<JointCollection> Model;
+    typedef DataTpl<JointCollection> Data;
+    typedef typename Model::JointIndex JointIndex;
+    
     const Frame & frame = model.frames[frame_id];
-    const Model::JointIndex & joint_id = frame.parent;
+    const JointIndex & joint_id = frame.parent;
     if(rf == WORLD)
     {
-      getJointJacobian(model,data,joint_id,WORLD,J);
+      getJointJacobian(model,data,joint_id,WORLD,EIGEN_CONST_CAST(Matrix6xLike,J));
       return;
     }
     
     if(rf == LOCAL)
     {
-      const SE3 & oMframe = data.oMf[frame_id];
+      Matrix6xLike & J_ = EIGEN_CONST_CAST(Matrix6xLike,J);
+      const typename Data::SE3 & oMframe = data.oMf[frame_id];
       const int colRef = nv(model.joints[joint_id])+idx_v(model.joints[joint_id])-1;
       
-      for(int j=colRef;j>=0;j=data.parents_fromRow[(size_t) j])
+      for(Eigen::DenseIndex j=colRef;j>=0;j=data.parents_fromRow[(size_t) j])
       {
-        J.col(j) = oMframe.actInv(Motion(data.J.col(j))).toVector(); // TODO: use MotionRef
+        J_.col(j) = oMframe.actInv(Motion(data.J.col(j))).toVector(); // TODO: use MotionRef
       }
       return;
     }
   }
   
-  inline void getFrameJacobian(const Model & model,
-                               const Data & data,
-                               const Model::FrameIndex frame_id,
-                               Data::Matrix6x & J)
+  template<typename JointCollection, typename Matrix6xLike>
+  inline void getFrameJacobian(const ModelTpl<JointCollection> & model,
+                               const DataTpl<JointCollection> & data,
+                               const typename ModelTpl<JointCollection>::FrameIndex frame_id,
+                               const Eigen::MatrixBase<Matrix6xLike> & J)
   {
-    getFrameJacobian(model,data,frame_id,LOCAL,J);
+    getFrameJacobian(model,data,frame_id,LOCAL,EIGEN_CONST_CAST(Matrix6xLike,J));
   }
 
 } // namespace se3
