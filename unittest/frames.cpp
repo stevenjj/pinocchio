@@ -68,9 +68,11 @@ BOOST_AUTO_TEST_CASE ( test_jacobian )
   se3::Data data_ref(model);
   
   VectorXd q = VectorXd::Ones(model.nq);
-  q.middleRows<4> (3).normalize();
+  q.segment<4> (3).normalize();
   VectorXd q_dot = VectorXd::Ones(model.nv);
-
+  
+  computeJointJacobians(model,data,q); framesForwardKinematics(model,data);
+  computeJointJacobians(model,data_ref,q); framesForwardKinematics(model,data_ref);
 
   /// In local frame
   Model::Index idx = model.getFrameId(frame_name);
