@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE ( test_jacobian )
   Motion nu_frame = Motion(Jff*q_dot);
   Motion nu_joint = Motion(Jjj*q_dot);
   
-  const SE3::ActionMatrix_t jXf = frame.placement.toActionMatrix();
+  const SE3::ActionMatrixType jXf = frame.placement.toActionMatrix();
   Data::Matrix6x Jjj_from_frame(jXf * Jff);
   BOOST_CHECK(Jjj_from_frame.isApprox(Jjj));
   
