@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016 CNRS
+// Copyright (c) 2015-2016,2018 CNRS
 // Copyright (c) 2015 Wandercraft, 86 rue de Paris 91400 Orsay, France.
 //
 // This file is part of Pinocchio
@@ -21,12 +21,6 @@
 
 #include <cmath>
 
-#ifdef __linux__
-  #define SINCOS sincos
-#elif __APPLE__
-  #define SINCOS __sincos
-#else // if sincos specialization does not exist
-  #define SINCOS(a,sa,ca) (*sa) = std::sin(a); (*ca) = std::cos(a)
-#endif
+#define SINCOS(a,sa,ca) (*sa) = std::sin(a); (*ca) = std::cos(a)
 
 #endif //#ifndef __math_sincos_hpp__
