@@ -26,13 +26,13 @@ namespace se3
 {
   
   
-  template<typename JointCollection>
-  inline void framesForwardKinematics(const ModelTpl<JointCollection> & model,
-                                      DataTpl<JointCollection> & data)
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
+  inline void framesForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                      DataTpl<Scalar,Options,JointCollectionTpl> & data)
   {
     assert(model.check(data) && "data is not consistent with model.");
     
-    typedef ModelTpl<JointCollection> Model;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
     typedef typename Model::FrameIndex FrameIndex;
     typedef typename Model::JointIndex JointIndex;
     
@@ -49,9 +49,9 @@ namespace se3
     }
   }
   
-  template<typename JointCollection, typename ConfigVectorType>
-  inline void framesForwardKinematics(const ModelTpl<JointCollection> & model,
-                                      DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType>
+  inline void framesForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                      DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                       const Eigen::MatrixBase<ConfigVectorType> & q)
   {
     assert(model.check(data) && "data is not consistent with model.");
@@ -60,10 +60,10 @@ namespace se3
     framesForwardKinematics(model, data);
   }
   
-  template<typename JointCollection, typename Matrix6xLike>
-  inline void getFrameJacobian(const ModelTpl<JointCollection> & model,
-                               const DataTpl<JointCollection> & data,
-                               const typename ModelTpl<JointCollection>::FrameIndex frame_id,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
+  inline void getFrameJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                               const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                               const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
                                const ReferenceFrame rf,
                                const Eigen::MatrixBase<Matrix6xLike> & J)
   {
@@ -72,8 +72,8 @@ namespace se3
     assert(data.J.cols() == model.nv);
     assert(model.check(data) && "data is not consistent with model.");
     
-    typedef ModelTpl<JointCollection> Model;
-    typedef DataTpl<JointCollection> Data;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
+    typedef DataTpl<Scalar,Options,JointCollectionTpl> Data;
     typedef typename Model::JointIndex JointIndex;
     
     const Frame & frame = model.frames[frame_id];
@@ -98,10 +98,10 @@ namespace se3
     }
   }
   
-  template<typename JointCollection, typename Matrix6xLike>
-  inline void getFrameJacobian(const ModelTpl<JointCollection> & model,
-                               const DataTpl<JointCollection> & data,
-                               const typename ModelTpl<JointCollection>::FrameIndex frame_id,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
+  inline void getFrameJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                               const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                               const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
                                const Eigen::MatrixBase<Matrix6xLike> & J)
   {
     getFrameJacobian(model,data,frame_id,LOCAL,EIGEN_CONST_CAST(Matrix6xLike,J));

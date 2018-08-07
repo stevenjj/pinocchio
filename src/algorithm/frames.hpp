@@ -34,9 +34,9 @@ namespace se3
    *
    * @warning    One of the algorithms forwardKinematics should have been called first
    */
-  template<typename JointCollection>
-  inline void framesForwardKinematics(const ModelTpl<JointCollection> & model,
-                                      DataTpl<JointCollection> & data);
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
+  inline void framesForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                      DataTpl<Scalar,Options,JointCollectionTpl> & data);
 
   /**
    * @brief      First calls the forwardKinematics on the model, then computes the placement of each frame.
@@ -49,9 +49,9 @@ namespace se3
    * @param      data                     Data associated to model.
    * @param[in]  q                        Configuration vector.
    */
-  template<typename JointCollection, typename ConfigVectorType>
-  inline void framesForwardKinematics(const ModelTpl<JointCollection> & model,
-                                      DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType>
+  inline void framesForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                      DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                       const Eigen::MatrixBase<ConfigVectorType> & q);
 
   /**
@@ -74,10 +74,10 @@ namespace se3
    *
    * @warning    The function se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
    */
-  template<typename JointCollection, typename Matrix6xLike>
-  inline void getFrameJacobian(const ModelTpl<JointCollection> & model,
-                               const DataTpl<JointCollection> & data,
-                               const typename ModelTpl<JointCollection>::FrameIndex frame_id,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
+  inline void getFrameJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                               const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                               const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
                                const ReferenceFrame rf,
                                const Eigen::MatrixBase<Matrix6xLike> & J);
   
@@ -122,10 +122,10 @@ namespace se3
    *
    * @warning    The function se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
    */
-  template<typename JointCollection, typename Matrix6xLike>
-  inline void getFrameJacobian(const ModelTpl<JointCollection> & model,
-                               const DataTpl<JointCollection> & data,
-                               const typename ModelTpl<JointCollection>::FrameIndex frame_id,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
+  inline void getFrameJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                               const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                               const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
                                const Eigen::MatrixBase<Matrix6xLike> & J);
  
 } // namespace se3

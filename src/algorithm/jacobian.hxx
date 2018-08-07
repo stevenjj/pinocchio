@@ -26,12 +26,12 @@
 namespace se3
 {
   
-  template<typename JointCollection, typename ConfigVectorType>
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType>
   struct JointJacobiansForwardStep
-  : public fusion::JointVisitorBase< JointJacobiansForwardStep<JointCollection,ConfigVectorType> >
+  : public fusion::JointVisitorBase< JointJacobiansForwardStep<Scalar,Options,JointCollectionTpl,ConfigVectorType> >
   {
-    typedef ModelTpl<JointCollection> Model;
-    typedef DataTpl<JointCollection> Data;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
+    typedef DataTpl<Scalar,Options,JointCollectionTpl> Data;
     
     typedef boost::fusion::vector<const Model &,
                                   Data &,
@@ -60,19 +60,19 @@ namespace se3
   
   };
   
-  template<typename JointCollection, typename ConfigVectorType>
-  inline const typename DataTpl<JointCollection>::Matrix6x &
-  computeJointJacobians(const ModelTpl<JointCollection> & model,
-                        DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType>
+  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::Matrix6x &
+  computeJointJacobians(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                        DataTpl<Scalar,Options,JointCollectionTpl> & data,
                         const Eigen::MatrixBase<ConfigVectorType> & q)
   {
     assert(model.check(data) && "data is not consistent with model.");
     assert(q.size() == model.nq && "The configuration vector is not of right size");
     
-    typedef ModelTpl<JointCollection> Model;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
     typedef typename Model::JointIndex JointIndex;
     
-    typedef JointJacobiansForwardStep<JointCollection,ConfigVectorType> Pass;
+    typedef JointJacobiansForwardStep<Scalar,Options,JointCollectionTpl,ConfigVectorType> Pass;
     for(JointIndex i=1; i<(JointIndex) model.njoints; ++i)
     {
       Pass::run(model.joints[i],data.joints[i],
@@ -82,12 +82,12 @@ namespace se3
     return data.J;
   }
   
-  template<typename JointCollection>
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
   struct JointJacobiansForwardStep2
-  : public fusion::JointVisitorBase< JointJacobiansForwardStep2<JointCollection> >
+  : public fusion::JointVisitorBase< JointJacobiansForwardStep2<Scalar,Options,JointCollectionTpl> >
   {
-    typedef ModelTpl<JointCollection> Model;
-    typedef DataTpl<JointCollection> Data;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
+    typedef DataTpl<Scalar,Options,JointCollectionTpl> Data;
     
     typedef boost::fusion::vector<Data &> ArgsType;
     
@@ -104,17 +104,17 @@ namespace se3
     
   };
   
-  template<typename JointCollection>
-  inline const typename DataTpl<JointCollection>::Matrix6x &
-  computeJointJacobians(const ModelTpl<JointCollection> & model,
-                        DataTpl<JointCollection> & data)
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
+  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::Matrix6x &
+  computeJointJacobians(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                        DataTpl<Scalar,Options,JointCollectionTpl> & data)
   {
     assert(model.check(data) && "data is not consistent with model.");
     
-    typedef ModelTpl<JointCollection> Model;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
     typedef typename Model::JointIndex JointIndex;
     
-    typedef JointJacobiansForwardStep2<JointCollection> Pass;
+    typedef JointJacobiansForwardStep2<Scalar,Options,JointCollectionTpl> Pass;
     for(JointIndex i=1; i< (JointIndex)model.njoints; ++i)
     {
       Pass::run(model.joints[i],data.joints[i],
@@ -127,10 +127,10 @@ namespace se3
   /* Return the jacobian of the output frame attached to joint <jointId> in the
    world frame or in the local frame depending on the template argument. The
    function computeJacobians should have been called first. */
-  template<typename JointCollection, typename Matrix6Like>
-  inline void getJointJacobian(const ModelTpl<JointCollection> & model,
-                               const DataTpl<JointCollection> & data,
-                               const typename ModelTpl<JointCollection>::JointIndex jointId,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6Like>
+  inline void getJointJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                               const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                               const typename ModelTpl<Scalar,Options,JointCollectionTpl>::JointIndex jointId,
                                const ReferenceFrame rf,
                                const Eigen::MatrixBase<Matrix6Like> & J)
   {
@@ -138,7 +138,7 @@ namespace se3
     assert( J.cols() == model.nv );
     assert(model.check(data) && "data is not consistent with model.");
     
-    typedef DataTpl<JointCollection> Data;
+    typedef DataTpl<Scalar,Options,JointCollectionTpl> Data;
     
     Matrix6Like & J_ = EIGEN_CONST_CAST(Matrix6Like,J);
     
@@ -151,12 +151,12 @@ namespace se3
     }
   }
   
-  template<typename JointCollection, typename ConfigVectorType, typename Matrix6Like>
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType, typename Matrix6Like>
   struct JointJacobianForwardStep
-  : public fusion::JointVisitorBase< JointJacobianForwardStep<JointCollection,ConfigVectorType,Matrix6Like> >
+  : public fusion::JointVisitorBase< JointJacobianForwardStep<Scalar,Options,JointCollectionTpl,ConfigVectorType,Matrix6Like> >
   {
-    typedef ModelTpl<JointCollection> Model;
-    typedef DataTpl<JointCollection> Data;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
+    typedef DataTpl<Scalar,Options,JointCollectionTpl> Data;
     
     typedef boost::fusion::vector<const Model &,
                                   Data &,
@@ -187,9 +187,9 @@ namespace se3
   
   };
   
-  template<typename JointCollection, typename ConfigVectorType, typename Matrix6Like>
-  inline void jointJacobian(const ModelTpl<JointCollection> & model,
-                            DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType, typename Matrix6Like>
+  inline void jointJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                            DataTpl<Scalar,Options,JointCollectionTpl> & data,
                             const Eigen::MatrixBase<ConfigVectorType> & q,
                             const JointIndex jointId,
                             const Eigen::MatrixBase<Matrix6Like> & J)
@@ -197,11 +197,11 @@ namespace se3
     assert(model.check(data) && "data is not consistent with model.");
     assert(q.size() == model.nq && "The configuration vector is not of right size");
     
-    typedef ModelTpl<JointCollection> Model;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
     typedef typename Model::JointIndex JointIndex;
     
     data.iMf[jointId].setIdentity();
-    typedef JointJacobianForwardStep<JointCollection,ConfigVectorType,Matrix6Like> Pass;
+    typedef JointJacobianForwardStep<Scalar,Options,JointCollectionTpl,ConfigVectorType,Matrix6Like> Pass;
     for(JointIndex i=jointId; i>0; i=model.parents[i])
     {
       Pass::run(model.joints[i],data.joints[i],
@@ -209,12 +209,12 @@ namespace se3
     }
   }
   
-  template<typename JointCollection, typename ConfigVectorType, typename TangentVectorType>
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType, typename TangentVectorType>
   struct JointJacobiansTimeVariationForwardStep
-  : public fusion::JointVisitorBase< JointJacobiansTimeVariationForwardStep<JointCollection,ConfigVectorType,TangentVectorType> >
+  : public fusion::JointVisitorBase< JointJacobiansTimeVariationForwardStep<Scalar,Options,JointCollectionTpl,ConfigVectorType,TangentVectorType> >
   {
-    typedef ModelTpl<JointCollection> Model;
-    typedef DataTpl<JointCollection> Data;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
+    typedef DataTpl<Scalar,Options,JointCollectionTpl> Data;
     
     typedef boost::fusion::vector<const Model &,
                                   Data &,
@@ -268,10 +268,10 @@ namespace se3
     
   };
   
-  template<typename JointCollection, typename ConfigVectorType, typename TangentVectorType>
-  inline const typename DataTpl<JointCollection>::Matrix6x &
-  computeJointJacobiansTimeVariation(const ModelTpl<JointCollection> & model,
-                                     DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType, typename TangentVectorType>
+  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::Matrix6x &
+  computeJointJacobiansTimeVariation(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                     DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                      const Eigen::MatrixBase<ConfigVectorType> & q,
                                      const Eigen::MatrixBase<TangentVectorType> & v)
   {
@@ -279,10 +279,10 @@ namespace se3
     assert(q.size() == model.nq && "The configuration vector is not of right size");
     assert(v.size() == model.nv && "The velocity vector is not of right size");
     
-    typedef ModelTpl<JointCollection> Model;
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
     typedef typename Model::JointIndex JointIndex;
     
-    typedef JointJacobiansTimeVariationForwardStep<JointCollection,ConfigVectorType,TangentVectorType> Pass;
+    typedef JointJacobiansTimeVariationForwardStep<Scalar,Options,JointCollectionTpl,ConfigVectorType,TangentVectorType> Pass;
     for(JointIndex i=1; i<(JointIndex)model.njoints; ++i)
     {
       Pass::run(model.joints[i],data.joints[i],
@@ -292,9 +292,9 @@ namespace se3
     return data.dJ;
   }
   
-  template<typename JointCollection, typename Matrix6Like>
-  inline void getJointJacobianTimeVariation(const ModelTpl<JointCollection> & model,
-                                            const DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6Like>
+  inline void getJointJacobianTimeVariation(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                            const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                             const JointIndex jointId,
                                             const ReferenceFrame rf,
                                             const Eigen::MatrixBase<Matrix6Like> & dJ)
@@ -303,7 +303,7 @@ namespace se3
     assert( dJ.cols() == model.nv );
     assert(model.check(data) && "data is not consistent with model.");
     
-    typedef DataTpl<JointCollection> Data;
+    typedef DataTpl<Scalar,Options,JointCollectionTpl> Data;
     
     Matrix6Like & dJ_ = EIGEN_CONST_CAST(Matrix6Like,dJ);
     

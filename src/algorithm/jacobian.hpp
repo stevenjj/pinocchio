@@ -39,10 +39,10 @@ namespace se3
   ///
   /// \return The full model Jacobian (matrix 6 x model.nv).
   ///
-  template<typename JointCollection, typename ConfigVectorType>
-  inline const typename DataTpl<JointCollection>::Matrix6x &
-  computeJointJacobians(const ModelTpl<JointCollection> & model,
-                        DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType>
+  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::Matrix6x &
+  computeJointJacobians(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                        DataTpl<Scalar,Options,JointCollectionTpl> & data,
                         const Eigen::MatrixBase<ConfigVectorType> & q);
   
   ///
@@ -79,10 +79,10 @@ namespace se3
   ///
   /// \return The full model Jacobian (matrix 6 x model.nv).
   ///
-  template<typename JointCollection>
-  inline const typename DataTpl<JointCollection>::Matrix6x &
-  computeJointJacobians(const ModelTpl<JointCollection> & model,
-                        DataTpl<JointCollection> & data);
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
+  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::Matrix6x &
+  computeJointJacobians(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                        DataTpl<Scalar,Options,JointCollectionTpl> & data);
   
   ///
   /// \brief Computes the full model Jacobian, i.e. the stack of all motion subspace expressed in the world frame.
@@ -116,10 +116,10 @@ namespace se3
   /// \param[in] jointId The id of the joint.
   /// \param[out] J A reference on the Jacobian matrix where the results will be stored in (dim 6 x model.nv). You must fill J with zero elements, e.g. J.fill(0.).
   ///
-  template<typename JointCollection, typename Matrix6Like>
-  inline void getJointJacobian(const ModelTpl<JointCollection> & model,
-                               const DataTpl<JointCollection> & data,
-                               const typename ModelTpl<JointCollection>::JointIndex jointId,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6Like>
+  inline void getJointJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                               const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                               const typename ModelTpl<Scalar,Options,JointCollectionTpl>::JointIndex jointId,
                                const ReferenceFrame rf,
                                const Eigen::MatrixBase<Matrix6Like> & J);
   
@@ -184,9 +184,9 @@ namespace se3
   ///         It is worth to call jacobian if you only need a single Jacobian for a specific joint. Otherwise, for several Jacobians, it is better
   ///         to call computeJacobians(model,data,q) followed by getJointJacobian(model,data,jointId,LOCAL,J) for each Jacobian.
   ///
-  template<typename JointCollection, typename ConfigVectorType, typename Matrix6Like>
-  inline void jointJacobian(const ModelTpl<JointCollection> & model,
-                            DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType, typename Matrix6Like>
+  inline void jointJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                            DataTpl<Scalar,Options,JointCollectionTpl> & data,
                             const Eigen::MatrixBase<ConfigVectorType> & q,
                             const JointIndex jointId,
                             const Eigen::MatrixBase<Matrix6Like> & J);
@@ -254,10 +254,10 @@ namespace se3
   ///
   /// \return The full model Jacobian (matrix 6 x model.nv).
   ///
-  template<typename JointCollection, typename ConfigVectorType, typename TangentVectorType>
-  inline const typename DataTpl<JointCollection>::Matrix6x &
-  computeJointJacobiansTimeVariation(const ModelTpl<JointCollection> & model,
-                                     DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType, typename TangentVectorType>
+  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::Matrix6x &
+  computeJointJacobiansTimeVariation(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                     DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                      const Eigen::MatrixBase<ConfigVectorType> & q,
                                      const Eigen::MatrixBase<TangentVectorType> & v);
   
@@ -295,9 +295,9 @@ namespace se3
   /// \param[in] jointId The id of the joint.
   /// \param[out] dJ A reference on the Jacobian matrix where the results will be stored in (dim 6 x model.nv). You must fill dJ with zero elements, e.g. dJ.fill(0.).
   ///
-  template<typename JointCollection, typename Matrix6Like>
-  inline void getJointJacobianTimeVariation(const ModelTpl<JointCollection> & model,
-                                            const DataTpl<JointCollection> & data,
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6Like>
+  inline void getJointJacobianTimeVariation(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                            const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                             const JointIndex jointId,
                                             const ReferenceFrame rf,
                                             const Eigen::MatrixBase<Matrix6Like> & dJ);

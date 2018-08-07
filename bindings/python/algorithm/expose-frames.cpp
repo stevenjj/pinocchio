@@ -51,13 +51,13 @@ namespace se3
     {
       using namespace Eigen;
       bp::def("framesKinematics",
-              &framesForwardKinematics<JointCollectionDefault>,
+              &framesForwardKinematics<double,0,JointCollectionDefaultTpl>,
               bp::args("Model","Data"),
               "Computes the placements of all the operational frames according to the current joint placement stored in data"
               "and put the results in data.");
       
       bp::def("framesKinematics",
-              &framesForwardKinematics<JointCollectionDefault,VectorXd>,
+              &framesForwardKinematics<double,0,JointCollectionDefaultTpl,VectorXd>,
               bp::args("Model","Data",
                        "Configuration q (size Model::nq)"),
               "Update first the placement of the joints according to the given configuration value."
