@@ -31,6 +31,15 @@
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
+BOOST_AUTO_TEST_CASE(cast)
+{
+  using namespace se3;
+  Frame frame("toto",0,0,SE3::Random(),OP_FRAME);
+  
+  BOOST_CHECK(frame.cast<double>() == frame);
+  BOOST_CHECK(frame.cast<long double>().cast<double>() == frame);
+}
+
 BOOST_AUTO_TEST_CASE ( test_kinematics )
 {
   using namespace Eigen;
