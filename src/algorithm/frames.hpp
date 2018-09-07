@@ -87,6 +87,7 @@ namespace se3
    *             You must first call se3::computeJointJacobians followed by se3::framesForwardKinematics to update placement values in data structure.
    *
    * @tparam     rf Reference frame in which the columns of the Jacobian are expressed.
+   * @deprecated This function is now deprecated. Please call se3::getFrameJacobian for same functionality.
    
    * @remark     Similarly to se3::getJointJacobian with LOCAL or WORLD parameters, if rf == LOCAL, this function returns the Jacobian of the frame expressed
    *             in the local coordinates of the frame, or if rl == WORDL, it returns the Jacobian expressed of the point coincident with the origin
@@ -111,6 +112,7 @@ namespace se3
   /**
    * @brief      Returns the jacobian of the frame expresssed in the LOCAL coordinate system of the frame.
    *             You must first call se3::computeJointJacobians followed by se3::framesForwardKinematics to update placement values in data structure.
+   \deprecated This function is now deprecated. Please call se3::getFrameJacobian for same functionality
    *
    * @tparam JointCollection Collection of Joint types.
    * @tparam Matrix6xLike Type of the matrix containing the joint Jacobian.
@@ -127,6 +129,7 @@ namespace se3
                                const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
                                const Eigen::MatrixBase<Matrix6xLike> & J);
+
  
 } // namespace se3
 
