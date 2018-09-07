@@ -327,6 +327,7 @@ namespace se3
   ///
   /// \brief Computes the Jacobian time variation of a specific joint frame expressed either in the world frame (rf = WORLD) or in the local frame (rf = LOCAL) of the joint.
   /// \note This jacobian is extracted from data.dJ. You have to run se3::computeJointJacobiansTimeVariation before calling it.
+  /// \deprecated This function is now deprecated. Please refer now to se3::getJointJacobianTimeVariation for similar function with updated name.  
   ///
   /// \deprecated This function is now deprecated. Please refer now to se3::getJacobianTimeVariation for similar function without ReferenceFrame template parameters.
   ///
