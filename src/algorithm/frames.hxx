@@ -107,6 +107,46 @@ namespace se3
     getFrameJacobian(model,data,frame_id,LOCAL,EIGEN_CONST_CAST(Matrix6xLike,J));
   }
 
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
+  void getFrameJacobianTimeVariation(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                     const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                                     const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
+                                     const ReferenceFrame rf,
+                                     const Eigen::MatrixBase<Matrix6xLike> & dJ)
+  {
+    assert( dJ.rows() == data.dJ.rows() );
+    assert( dJ.cols() == data.dJ.cols() );    
+    assert(model.check(data) && "data is not consistent with model.");
+    
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
+    typedef DataTpl<Scalar,Options,JointCollectionTpl> Data;
+    
+    typedef typename Model::Frame Frame;
+    typedef typename Model::SE3 SE3;
+    
+    const Frame & frame = model.frames[frame_id];
+    const typename Model::JointIndex & joint_id = frame.parent;
+    if(rf == WORLD)
+    {
+      getJointJacobianTimeVariation(model,data,joint_id,WORLD,EIGEN_CONST_CAST(Matrix6xLike,dJ));
+      return;
+    }
+    
+    if (rf == LOCAL)
+    {
+      Matrix6xLike & dJ_ = EIGEN_CONST_CAST(Matrix6xLike,dJ);
+      const SE3 & oMframe = data.oMf[frame_id];
+      const int colRef = nv(model.joints[joint_id])+idx_v(model.joints[joint_id])-1;
+      
+      for(int j=colRef;j>=0;j=data.parents_fromRow[(size_t) j])
+      {
+        dJ_.col(j) = oMframe.actInv(Motion(data.dJ.col(j))).toVector();
+      }
+      return;
+    }    
+  }
+  
+
 } // namespace se3
 
 #endif // ifndef __se3_frames_hxx__

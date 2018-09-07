@@ -112,7 +112,7 @@ namespace se3
   /**
    * @brief      Returns the jacobian of the frame expresssed in the LOCAL coordinate system of the frame.
    *             You must first call se3::computeJointJacobians followed by se3::framesForwardKinematics to update placement values in data structure.
-   \deprecated This function is now deprecated. Please call se3::getFrameJacobian for same functionality
+   * @deprecated This function is now deprecated. Please call se3::getFrameJacobian for same functionality
    *
    * @tparam JointCollection Collection of Joint types.
    * @tparam Matrix6xLike Type of the matrix containing the joint Jacobian.
@@ -125,11 +125,54 @@ namespace se3
    * @warning    The function se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
    */
   template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
+  PINOCCHIO_DEPRECATED
   inline void getFrameJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
                                const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
                                const Eigen::MatrixBase<Matrix6xLike> & J);
 
+  ///
+  /// \brief Computes the Jacobian time variation of a specific frame (given by frame_id) expressed either in the world frame (rf = WORLD) or in the local frame (rf = LOCAL).
+  /// \note This jacobian is extracted from data.dJ. You have to run se3::computeJacobiansTimeVariation before calling it.
+  /// \deprecated This function is now deprecated. Please call se3::getFrameJacobianTimeVariation for same functionality
+  ///
+  /// \tparam rf Reference frame in which the Jacobian is expressed.
+  ///
+  /// \param[in] localFrame Expressed the Jacobian in the local frame or world frame coordinates system.
+  /// \param[in] model The model structure of the rigid body system.
+  /// \param[in] data The data structure of the rigid body system.
+  /// \param[in] frameId The index of the frame.
+  /// \param[out] dJ A reference on the Jacobian matrix where the results will be stored in (dim 6 x model.nv). You must fill dJ with zero elements, e.g. dJ.fill(0.).
+  ///
+  template<ReferenceFrame rf>
+  PINOCCHIO_DEPRECATED
+  void getFrameJacobianTimeVariation(const Model & model,
+                                     const Data & data,
+                                     const Model::FrameIndex frameId,
+                                     Data::Matrix6x & dJ)
+  {
+    getFrameJacobianTimeVariation(model,data,frameId,rf,dJ);
+  }
+  ///
+  /// \brief Computes the Jacobian time variation of a specific frame (given by frame_id) expressed either in the world frame (rf = WORLD) or in the local frame (rf = LOCAL).
+  /// \note This jacobian is extracted from data.dJ. You have to run se3::computeJacobiansTimeVariation before calling it.
+  ///
+  /// \tparam JointCollection Collection of Joint types.
+  /// \tparam Matrix6xLike Type of the matrix containing the joint Jacobian.
+  ///
+  /// \param[in] model The model structure of the rigid body system.
+  /// \param[in] data The data structure of the rigid body system.
+  /// \param[in] frameId The index of the frame.
+  /// \param[in] rf Reference frame in which the Jacobian is expressed.
+  /// \param[out] dJ A reference on the Jacobian matrix where the results will be stored in (dim 6 x model.nv). You must fill dJ with zero elements, e.g. dJ.fill(0.).
+  ///
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
+  void getFrameJacobianTimeVariation(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                     const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                                     const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
+                                     const ReferenceFrame rf,
+                                     const Eigen::MatrixBase<Matrix6xLike> & dJ);
+  
  
 } // namespace se3
 

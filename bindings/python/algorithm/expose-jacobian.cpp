@@ -76,7 +76,7 @@ namespace se3
               "Computes the full model Jacobian, i.e. the stack of all motion subspace expressed in the world frame.\n"
               "The result is accessible through data.J. This function computes also the forwardKinematics of the model.",
               bp::return_value_policy<bp::return_by_value>());
-      
+
       bp::def("computeJointJacobians",
               &computeJointJacobians<double,0,JointCollectionDefaultTpl>,
               bp::args("Model","Data"),
@@ -93,7 +93,7 @@ namespace se3
                        "update_kinematics (true = update the value of the total jacobian)"),
               "Computes the jacobian of a given given joint according to the given input configuration."
               "If rf is set to LOCAL, it returns the jacobian associated to the joint frame. Otherwise, it returns the jacobian of the frame coinciding with the world frame.");
-      
+
       bp::def("getJointJacobian",get_jacobian_proxy,
               bp::args("Model, the model of the kinematic tree",
                        "Data, the data associated to the model where the results are stored",
@@ -115,7 +115,7 @@ namespace se3
                        "Data, the data associated to the model where the results are stored",
                        "Joint ID, the index of the joint.",
                        "Reference frame rf (either ReferenceFrame.LOCAL or ReferenceFrame.WORLD)"),
-              "Computes the Jacobian time variation of a specific joint frame expressed either in the world frame or in the local frame of the joint."
+              "Computes the Jacobian time variation of a specific joint expressed either in the world frame or in the local frame of the joint."
               "You have to call computeJointJacobiansTimeVariation first."
               "If rf is set to LOCAL, it returns the jacobian time variation associated to the joint frame. Otherwise, it returns the jacobian time variation of the frame coinciding with the world frame.");
     }
