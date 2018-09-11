@@ -55,6 +55,42 @@ namespace se3
                                       const Eigen::MatrixBase<ConfigVectorType> & q);
 
   /**
+   * @brief      Updates the placement of the given frame.
+   *
+   * @param[in]  model        The kinematic model.
+   * @param      data         Data associated to model.
+   * @param[in]  frame_id     Id of the operational Frame.
+   *
+   * @return     A reference to the frame placement stored in data.oMf[frame_id]
+   *
+   * @warning    One of the algorithms forwardKinematics should have been called first
+   */
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
+  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::SE3 &
+  frameForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                         DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                         const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id);
+
+
+  /**
+   * @brief      Returns the spatial velocity of the frame expressed in the LOCAL frame coordinate system.
+   *             You must first call se3::forwardKinematics to update placement and velocity values in data structure.
+   *
+   * @param[in]  model       The kinematic model
+   * @param[in]  data        Data associated to model
+   * @param[in]  frame_id    Id of the operational Frame
+   * @param[out] frame_v     The spatial velocity of the Frame expressed in the coordinates Frame.
+   *
+   * @warning    Fist or second order forwardKinematics should have been called first
+   */
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename MotionLike>
+  void getFrameVelocity(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                        const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                        const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
+                        MotionDense<MotionLike> & frame_v);
+
+
+  /**
    * @brief      Returns the jacobian of the frame expresssed either expressed in the LOCAL frame coordinate system or in the WORLD coordinate system,
    *             depending on the value of rf.
    *             You must first call se3::computeJointJacobians followed by se3::framesForwardKinematics to update placement values in data structure.
@@ -69,7 +105,7 @@ namespace se3
    * @param[in]  model       The kinematic model
    * @param[in]  data        Data associated to model
    * @param[in]  frame_id    Id of the operational Frame
-   * @param[in] rf Reference frame in which the Jacobian is expressed.
+   * @param[in]  rf          Reference frame in which the Jacobian is expressed.
    * @param[out] J           The Jacobian of the Frame expressed in the coordinates Frame.
    *
    * @warning    The function se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
@@ -81,7 +117,27 @@ namespace se3
                                const ReferenceFrame rf,
                                const Eigen::MatrixBase<Matrix6xLike> & J);
   
+
+   /**
+   * @brief      Returns the spatial acceleration of the frame expressed in the LOCAL frame coordinate system.
+   *             You must first call se3::forwardKinematics to update placement values in data structure.
+   *
+   * @param[in]  model       The kinematic model
+   * @param[in]  data        Data associated to model
+   * @param[in]  frame_id    Id of the operational Frame
+   * @param[out] frame_a     The spatial acceleration of the Frame expressed in the coordinates Frame.
+   *
+   * @warning    Second order forwardKinematics should have been called first
+   */
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename MotionLike>
+  void getFrameAcceleration(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                            const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                            const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
+                            MotionDense<MotionLike> & frame_a);
+
+
   /**
+   /**
    * @brief      Returns the jacobian of the frame expresssed either expressed in the LOCAL frame coordinate system or in the WORLD coordinate system,
    *             depending on the value of rf.
    *             You must first call se3::computeJointJacobians followed by se3::framesForwardKinematics to update placement values in data structure.
@@ -99,7 +155,7 @@ namespace se3
    * @param[in] rf Reference frame in which the Jacobian is expressed.
    * @param[out] J           The Jacobian of the Frame expressed in the coordinates Frame.
    *
-   * @warning    The function se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
+   * @warning    The functions se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
    */
   template<ReferenceFrame rf>
   PINOCCHIO_DEPRECATED
@@ -130,6 +186,26 @@ namespace se3
                                const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
                                const Eigen::MatrixBase<Matrix6xLike> & J);
+  
+  ///
+  /// \brief Computes the Jacobian time variation of a specific frame (given by frame_id) expressed either in the world frame (rf = WORLD) or in the local frame (rf = LOCAL).
+  /// \note This jacobian is extracted from data.dJ. You have to run se3::computeJacobiansTimeVariation before calling it.
+  ///
+  /// \tparam JointCollection Collection of Joint types.
+  /// \tparam Matrix6xLike Type of the matrix containing the joint Jacobian.
+  ///
+  /// \param[in] model The model structure of the rigid body system.
+  /// \param[in] data The data structure of the rigid body system.
+  /// \param[in] frameId The index of the frame.
+  /// \param[in] rf Reference frame in which the Jacobian is expressed.
+  /// \param[out] dJ A reference on the Jacobian matrix where the results will be stored in (dim 6 x model.nv). You must fill dJ with zero elements, e.g. dJ.fill(0.).
+  ///
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
+  void getFrameJacobianTimeVariation(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                     const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                                     const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
+                                     const ReferenceFrame rf,
+                                     const Eigen::MatrixBase<Matrix6xLike> & dJ);
 
   ///
   /// \brief Computes the Jacobian time variation of a specific frame (given by frame_id) expressed either in the world frame (rf = WORLD) or in the local frame (rf = LOCAL).
@@ -153,27 +229,7 @@ namespace se3
   {
     getFrameJacobianTimeVariation(model,data,frameId,rf,dJ);
   }
-  ///
-  /// \brief Computes the Jacobian time variation of a specific frame (given by frame_id) expressed either in the world frame (rf = WORLD) or in the local frame (rf = LOCAL).
-  /// \note This jacobian is extracted from data.dJ. You have to run se3::computeJacobiansTimeVariation before calling it.
-  ///
-  /// \tparam JointCollection Collection of Joint types.
-  /// \tparam Matrix6xLike Type of the matrix containing the joint Jacobian.
-  ///
-  /// \param[in] model The model structure of the rigid body system.
-  /// \param[in] data The data structure of the rigid body system.
-  /// \param[in] frameId The index of the frame.
-  /// \param[in] rf Reference frame in which the Jacobian is expressed.
-  /// \param[out] dJ A reference on the Jacobian matrix where the results will be stored in (dim 6 x model.nv). You must fill dJ with zero elements, e.g. dJ.fill(0.).
-  ///
-  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
-  void getFrameJacobianTimeVariation(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
-                                     const DataTpl<Scalar,Options,JointCollectionTpl> & data,
-                                     const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
-                                     const ReferenceFrame rf,
-                                     const Eigen::MatrixBase<Matrix6xLike> & dJ);
-  
- 
+
 } // namespace se3
 
 /* --- Details -------------------------------------------------------------------- */

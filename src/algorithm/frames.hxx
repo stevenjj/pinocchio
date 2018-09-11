@@ -59,6 +59,49 @@ namespace se3
     forwardKinematics(model, data, q);
     framesForwardKinematics(model, data);
   }
+
+  inline const SE3 & frameForwardKinematics(const Model & model,
+                                            Data & data,
+                                            const Model::FrameIndex frame_id)
+  {
+    const Frame & frame = model.frames[frame_id];
+    const Model::JointIndex & parent = frame.parent;
+    if (frame.placement.isIdentity())
+      data.oMf[frame_id] = data.oMi[parent];
+    else
+      data.oMf[frame_id] = data.oMi[parent]*frame.placement;
+    return data.oMf[frame_id];
+  }
+
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename MotionLike>
+  void getFrameVelocity(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                        const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                        const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
+                        MotionDense<MotionLike> & frame_v)
+  {
+    assert(model.check(data) && "data is not consistent with model.");
+    
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
+
+    const typename Model::Frame & frame = model.frames[frame_id];
+    const typename Model::JointIndex & parent = frame.parent;
+    frame_v = frame.placement.actInv(data.v[parent]);
+  }
+
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename MotionLike>
+  void getFrameAcceleration(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                            const DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                            const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
+                            MotionDense<MotionLike> & frame_a)
+  {
+    assert(model.check(data) && "data is not consistent with model.");
+
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
+    
+    const typename Model::Frame & frame = model.frames[frame_id];
+    const typename Model::JointIndex & parent = frame.parent;
+    frame_a = frame.placement.actInv(data.a[parent]);
+  }
   
   template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
   inline void getFrameJacobian(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,

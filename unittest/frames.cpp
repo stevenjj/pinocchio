@@ -90,6 +90,82 @@ BOOST_AUTO_TEST_CASE ( test_kinematics )
 
 }
 
+BOOST_AUTO_TEST_CASE ( test_single_kinematics )
+{
+  using namespace Eigen;
+  using namespace se3;
+
+  se3::Model model;
+  se3::buildModels::humanoidSimple(model);
+  Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
+  const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
+  const SE3 & framePlacement = SE3::Random();
+  model.addFrame(Frame (frame_name, parent_idx, 0, framePlacement, OP_FRAME));
+  Model::FrameIndex frame_idx = model.getFrameId(frame_name);
+  se3::Data data(model);
+  se3::Data data_ref(model);
+
+  VectorXd q = VectorXd::Ones(model.nq);
+  q.middleRows<4> (3).normalize();
+
+  forwardKinematics(model, data, q);
+  frameForwardKinematics(model, data, frame_idx);
+
+  framesForwardKinematics(model, data_ref, q);
+
+  BOOST_CHECK(data.oMf[frame_idx].isApprox(data_ref.oMf[frame_idx]));
+}
+
+BOOST_AUTO_TEST_CASE ( test_velocity )
+{
+  using namespace Eigen;
+  using namespace se3;
+
+  se3::Model model;
+  se3::buildModels::humanoidSimple(model);
+  Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
+  const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
+  const SE3 & framePlacement = SE3::Random();
+  model.addFrame(Frame (frame_name, parent_idx, 0, framePlacement, OP_FRAME));
+  Model::FrameIndex frame_idx = model.getFrameId(frame_name);
+  se3::Data data(model);
+
+  VectorXd q = VectorXd::Ones(model.nq);
+  q.middleRows<4> (3).normalize();
+  VectorXd v = VectorXd::Ones(model.nv);
+  forwardKinematics(model, data, q, v);
+
+  Motion vf;
+  getFrameVelocity(model, data, frame_idx, vf);
+
+  BOOST_CHECK(vf.isApprox(framePlacement.actInv(data.v[parent_idx])));
+}
+
+BOOST_AUTO_TEST_CASE ( test_acceleration )
+{
+  using namespace Eigen;
+  using namespace se3;
+
+  se3::Model model;
+  se3::buildModels::humanoidSimple(model);
+  Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
+  const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
+  const SE3 & framePlacement = SE3::Random();
+  model.addFrame(Frame (frame_name, parent_idx, 0, framePlacement, OP_FRAME));
+  Model::FrameIndex frame_idx = model.getFrameId(frame_name);
+  se3::Data data(model);
+
+  VectorXd q = VectorXd::Ones(model.nq);
+  q.middleRows<4> (3).normalize();
+  VectorXd v = VectorXd::Ones(model.nv);
+  VectorXd a = VectorXd::Ones(model.nv);
+  forwardKinematics(model, data, q, v, a);
+
+  Motion af;
+  getFrameAcceleration(model, data, frame_idx, af);
+
+  BOOST_CHECK(af.isApprox(framePlacement.actInv(data.a[parent_idx])));
+}
 
 BOOST_AUTO_TEST_CASE ( test_jacobian )
 {
