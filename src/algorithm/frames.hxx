@@ -27,8 +27,8 @@ namespace se3
   
   
   template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
-  inline void framesForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
-                                      DataTpl<Scalar,Options,JointCollectionTpl> & data)
+  inline void updateFramePlacements(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                    DataTpl<Scalar,Options,JointCollectionTpl> & data)
   {
     assert(model.check(data) && "data is not consistent with model.");
     
@@ -49,6 +49,33 @@ namespace se3
     }
   }
   
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
+  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::SE3 &
+  updateFramePlacement(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                       DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                       const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id)
+  {
+    assert(model.check(data) && "data is not consistent with model.");
+    
+    typedef ModelTpl<Scalar,Options,JointCollectionTpl> Model;
+    const typename Model::Frame & frame = model.frames[frame_id];
+    const typename Model::JointIndex & parent = frame.parent;
+    
+    if (frame.placement.isIdentity())
+      data.oMf[frame_id] = data.oMi[parent];
+    else
+      data.oMf[frame_id] = data.oMi[parent]*frame.placement;
+    return data.oMf[frame_id];
+  }
+
+
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
+  inline void framesForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                      DataTpl<Scalar,Options,JointCollectionTpl> & data)
+  {
+    updateFramePlacements(model,data);
+  }
+
   template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename ConfigVectorType>
   inline void framesForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
                                       DataTpl<Scalar,Options,JointCollectionTpl> & data,
@@ -57,27 +84,14 @@ namespace se3
     assert(model.check(data) && "data is not consistent with model.");
     
     forwardKinematics(model, data, q);
-    framesForwardKinematics(model, data);
-  }
-
-  inline const SE3 & frameForwardKinematics(const Model & model,
-                                            Data & data,
-                                            const Model::FrameIndex frame_id)
-  {
-    const Frame & frame = model.frames[frame_id];
-    const Model::JointIndex & parent = frame.parent;
-    if (frame.placement.isIdentity())
-      data.oMf[frame_id] = data.oMi[parent];
-    else
-      data.oMf[frame_id] = data.oMi[parent]*frame.placement;
-    return data.oMf[frame_id];
+    updateFramePlacements(model, data);
   }
 
   template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename MotionLike>
   void getFrameVelocity(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
                         const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                         const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
-                        MotionDense<MotionLike> & frame_v)
+                        const MotionDense<MotionLike> & frame_v)
   {
     assert(model.check(data) && "data is not consistent with model.");
     
@@ -85,14 +99,14 @@ namespace se3
 
     const typename Model::Frame & frame = model.frames[frame_id];
     const typename Model::JointIndex & parent = frame.parent;
-    frame_v = frame.placement.actInv(data.v[parent]);
+    const_cast<MotionLike &>(frame_v.derived()) = frame.placement.actInv(data.v[parent]);
   }
 
   template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename MotionLike>
   void getFrameAcceleration(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
                             const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                             const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
-                            MotionDense<MotionLike> & frame_a)
+                            const MotionDense<MotionLike> & frame_a)
   {
     assert(model.check(data) && "data is not consistent with model.");
 
@@ -100,7 +114,7 @@ namespace se3
     
     const typename Model::Frame & frame = model.frames[frame_id];
     const typename Model::JointIndex & parent = frame.parent;
-    frame_a = frame.placement.actInv(data.a[parent]);
+    const_cast<MotionLike &>(frame_a.derived()) = frame.placement.actInv(data.a[parent]);
   }
   
   template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>

@@ -35,8 +35,26 @@ namespace se3
    * @warning    One of the algorithms forwardKinematics should have been called first
    */
   template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
-  inline void framesForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
-                                      DataTpl<Scalar,Options,JointCollectionTpl> & data);
+  inline void updateFramePlacements(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                                    DataTpl<Scalar,Options,JointCollectionTpl> & data);
+
+  /**
+   * @brief      Updates the placement of the given frame.
+   *
+   * @param[in]  model        The kinematic model.
+   * @param      data         Data associated to model.
+   * @param[in]  frame_id     Id of the operational Frame.
+   *
+   * @return     A reference to the frame placement stored in data.oMf[frame_id]
+   *
+   * @warning    One of the algorithms forwardKinematics should have been called first
+   */
+  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
+  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::SE3 &
+  updateFramePlacement(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
+                       DataTpl<Scalar,Options,JointCollectionTpl> & data,
+                       const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id);
+
 
   /**
    * @brief      First calls the forwardKinematics on the model, then computes the placement of each frame.
@@ -54,23 +72,6 @@ namespace se3
                                       DataTpl<Scalar,Options,JointCollectionTpl> & data,
                                       const Eigen::MatrixBase<ConfigVectorType> & q);
 
-  /**
-   * @brief      Updates the placement of the given frame.
-   *
-   * @param[in]  model        The kinematic model.
-   * @param      data         Data associated to model.
-   * @param[in]  frame_id     Id of the operational Frame.
-   *
-   * @return     A reference to the frame placement stored in data.oMf[frame_id]
-   *
-   * @warning    One of the algorithms forwardKinematics should have been called first
-   */
-  template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl>
-  inline const typename DataTpl<Scalar,Options,JointCollectionTpl>::SE3 &
-  frameForwardKinematics(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
-                         DataTpl<Scalar,Options,JointCollectionTpl> & data,
-                         const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id);
-
 
   /**
    * @brief      Returns the spatial velocity of the frame expressed in the LOCAL frame coordinate system.
@@ -87,7 +88,7 @@ namespace se3
   void getFrameVelocity(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
                         const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                         const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
-                        MotionDense<MotionLike> & frame_v);
+                        const MotionDense<MotionLike> & frame_v);
 
 
   /**
@@ -133,14 +134,13 @@ namespace se3
   void getFrameAcceleration(const ModelTpl<Scalar,Options,JointCollectionTpl> & model,
                             const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                             const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
-                            MotionDense<MotionLike> & frame_a);
+                            const MotionDense<MotionLike> & frame_a);
 
 
   /**
-   /**
    * @brief      Returns the jacobian of the frame expresssed either expressed in the LOCAL frame coordinate system or in the WORLD coordinate system,
    *             depending on the value of rf.
-   *             You must first call se3::computeJointJacobians followed by se3::framesForwardKinematics to update placement values in data structure.
+   *             You must first call se3::computeJointJacobians followed by se3::updateFramePlacements to update placement values in data structure.
    *
    * @tparam     rf Reference frame in which the columns of the Jacobian are expressed.
    * @deprecated This function is now deprecated. Please call se3::getFrameJacobian for same functionality.
@@ -155,7 +155,7 @@ namespace se3
    * @param[in] rf Reference frame in which the Jacobian is expressed.
    * @param[out] J           The Jacobian of the Frame expressed in the coordinates Frame.
    *
-   * @warning    The functions se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
+   * @warning    The functions se3::computeJointJacobians and se3::updateFramePlacements should have been called first.
    */
   template<ReferenceFrame rf>
   PINOCCHIO_DEPRECATED
@@ -167,7 +167,7 @@ namespace se3
   
   /**
    * @brief      Returns the jacobian of the frame expresssed in the LOCAL coordinate system of the frame.
-   *             You must first call se3::computeJointJacobians followed by se3::framesForwardKinematics to update placement values in data structure.
+   *             You must first call se3::computeJointJacobians followed by se3::updateFramePlacements to update placement values in data structure.
    * @deprecated This function is now deprecated. Please call se3::getFrameJacobian for same functionality
    *
    * @tparam JointCollection Collection of Joint types.
@@ -178,7 +178,7 @@ namespace se3
    * @param[in]  frame_id    Id of the operational Frame
    * @param[out] J           The Jacobian of the Frame expressed in the coordinates Frame.
    *
-   * @warning    The function se3::computeJointJacobians and se3::framesForwardKinematics should have been called first.
+   * @warning    The function se3::computeJointJacobians and se3::updateFramePlacements should have been called first.
    */
   template<typename Scalar, int Options, template<typename,int> class JointCollectionTpl, typename Matrix6xLike>
   PINOCCHIO_DEPRECATED
