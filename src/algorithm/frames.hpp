@@ -90,7 +90,6 @@ namespace se3
                         const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
                         const MotionDense<MotionLike> & frame_v);
 
-
   /**
    * @brief      Returns the jacobian of the frame expresssed either expressed in the LOCAL frame coordinate system or in the WORLD coordinate system,
    *             depending on the value of rf.
@@ -135,7 +134,6 @@ namespace se3
                             const DataTpl<Scalar,Options,JointCollectionTpl> & data,
                             const typename ModelTpl<Scalar,Options,JointCollectionTpl>::FrameIndex frame_id,
                             const MotionDense<MotionLike> & frame_a);
-
 
   /**
    * @brief      Returns the jacobian of the frame expresssed either expressed in the LOCAL frame coordinate system or in the WORLD coordinate system,
