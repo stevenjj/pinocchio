@@ -40,12 +40,11 @@ namespace se3
       
       if(setRandomLimits)
         idx = model.addJoint(model.getJointId(parent_name),joint,
-                             SE3::Random(),
-                             name + "_joint",
-                             TV::Random() + TV::Constant(1),
-                             TV::Random() + TV::Constant(1),
-                             CV::Random() - CV::Constant(1),
-                             CV::Random() + CV::Constant(1)
+                             placement, name + "_joint",
+                             TV::Random() + TV::Constant(1), // effort
+                             TV::Random() + TV::Constant(1), // vel
+                             CV::Random() - CV::Constant(1), // qmin
+                             CV::Random() + CV::Constant(1)  // qmax
                              );
       else
         idx = model.addJoint(model.getJointId(parent_name),joint,
@@ -98,7 +97,7 @@ namespace se3
         addJointAndBody(model, JointModelRX(), "ff5_joint", "root", Id, true);
       }
       else
-        addJointAndBody(model, JointModelFreeFlyer(), "universe", "root", Id, false);
+        addJointAndBody(model, JointModelFreeFlyer(), "universe", "root", Id);
 
       // lleg
       addJointAndBody(model,JointModelRX(),"root_joint","lleg1");
