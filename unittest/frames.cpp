@@ -31,6 +31,27 @@
 
 BOOST_AUTO_TEST_SUITE ( BOOST_TEST_MODULE )
 
+BOOST_AUTO_TEST_CASE(frame_basic)
+{
+  using namespace se3;
+  Model model;
+  buildModels::humanoidSimple(model);
+  
+  BOOST_CHECK(model.frames.size() >= size_t(model.njoints));
+  for(Model::FrameVector::const_iterator it = model.frames.begin();
+      it != model.frames.end(); ++it)
+  {
+    const Frame & frame = *it;
+    BOOST_CHECK(frame == frame);
+    Frame frame_copy(frame);
+    BOOST_CHECK(frame_copy == frame);
+  }
+  
+  std::ostringstream os;
+  os << Frame() << std::endl;
+  BOOST_CHECK(!os.str().empty());
+}
+
 BOOST_AUTO_TEST_CASE(cast)
 {
   using namespace se3;
