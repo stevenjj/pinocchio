@@ -62,14 +62,25 @@ namespace se3
   {
     using std::fabs;
     using std::sqrt;
+    using std::atan;
     using std::acos;
+    using std::asin;
     using std::pow;
+    using std::cos;
+    using std::sin;
     
 #ifdef PINOCCHIO_WITH_CPPAD_SUPPORT
     using CppAD::fabs;
     using CppAD::sqrt;
+    using CppAD::atan;
     using CppAD::acos;
+    using CppAD::asin;
+    using CppAD::atan2;
     using CppAD::pow;
+    using CppAD::cos;
+    using CppAD::sin;
+#else
+    using std::atan2;
 #endif
   }
 }
