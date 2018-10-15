@@ -21,6 +21,7 @@
 #include "pinocchio/fwd.hpp"
 #include <math.h>
 #include <boost/math/constants/constants.hpp>
+#include "pinocchio/math/sincos.hpp"
 
 #ifdef PINOCCHIO_WITH_CPPAD_SUPPORT
 namespace boost
