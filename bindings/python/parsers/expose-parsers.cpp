@@ -16,7 +16,7 @@
 // <http://www.gnu.org/licenses/>.
 
 #include "pinocchio/bindings/python/parsers/parsers.hpp"
-#include "pinocchio/bindings/python/fwd.hpp"
+#include "pinocchio/bindings/python/parsers/sample-models.hpp"
 
 namespace se3
 {
@@ -26,6 +26,7 @@ namespace se3
     void exposeParsers()
     {
       ParsersPythonVisitor::expose();
+      SampleModelsPythonVisitor::expose();
     }
     
   } // namespace python
