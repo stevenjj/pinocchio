@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2018 CNRS
+# Copyright (c) 2015-2018 CNRS INRIA
 # Copyright (c) 2015 Wandercraft, 86 rue de Paris 91400 Orsay, France.
 #
 # This file is part of Pinocchio
@@ -114,6 +114,7 @@ ADD_PINOCCHIO_UNIT_TEST(copy eigen3)
 ADD_PINOCCHIO_UNIT_TEST(kinematics-derivatives eigen3)
 ADD_PINOCCHIO_UNIT_TEST(rnea-derivatives eigen3)
 ADD_PINOCCHIO_UNIT_TEST(aba-derivatives eigen3)
+ADD_PINOCCHIO_UNIT_TEST(centroidal-derivatives eigen3)
 
 # Automatic differentiation
 IF(CPPAD_FOUND)
@@ -125,9 +126,9 @@ IF(CPPAD_FOUND)
 ENDIF(CPPAD_FOUND)
 
 IF(CPPADCG_FOUND)
-  ADD_UNIT_TEST(cppadcg-basic "eigen3;cppadcg")
+  ADD_PINOCCHIO_UNIT_TEST(cppadcg-basic "eigen3;cppadcg")
   SET_PROPERTY(TARGET cppadcg-basic PROPERTY CXX_STANDARD 11)
-  ADD_UNIT_TEST(cppadcg-algo "eigen3;cppadcg")
+  ADD_PINOCCHIO_UNIT_TEST(cppadcg-algo "eigen3;cppadcg")
   SET_PROPERTY(TARGET cppadcg-algo PROPERTY CXX_STANDARD 11)
 ENDIF(CPPADCG_FOUND)
 
