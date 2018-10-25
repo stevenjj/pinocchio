@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE ( test_kinematics )
   using namespace se3;
 
   se3::Model model;
-  se3::buildModels::humanoidSimple(model);
+  se3::buildModels::humanoidRandom(model);
   Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
   const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
   const SE3 & framePlacement = SE3::Random();
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE ( test_update_placements )
   using namespace se3;
 
   se3::Model model;
-  se3::buildModels::humanoidSimple(model);
+  se3::buildModels::humanoidRandom(model);
   Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
   const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
   const SE3 & framePlacement = SE3::Random();
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE ( test_update_single_placement )
   using namespace se3;
 
   se3::Model model;
-  se3::buildModels::humanoidSimple(model);
+  se3::buildModels::humanoidRandom(model);
   Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
   const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
   const SE3 & framePlacement = SE3::Random();
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE ( test_velocity )
   using namespace se3;
 
   se3::Model model;
-  se3::buildModels::humanoidSimple(model);
+  se3::buildModels::humanoidRandom(model);
   Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
   const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
   const SE3 & framePlacement = SE3::Random();
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE ( test_acceleration )
   using namespace se3;
 
   se3::Model model;
-  se3::buildModels::humanoidSimple(model);
+  se3::buildModels::humanoidRandom(model);
   Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
   const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
   const SE3 & framePlacement = SE3::Random();
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE ( test_jacobian )
   using namespace se3;
 
   Model model;
-  buildModels::humanoidSimple(model);
+  buildModels::humanoidRandom(model);
   Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
   const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
   const SE3 & framePlacement = SE3::Random();
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE ( test_frame_jacobian_time_variation )
   using namespace se3;
   
   se3::Model model;
-  se3::buildModels::humanoidSimple(model);
+  se3::buildModels::humanoidRandom(model);
   Model::Index parent_idx = model.existJointName("rarm2_joint")?model.getJointId("rarm2_joint"):(Model::Index)(model.njoints-1);
   const std::string & frame_name = std::string( model.names[parent_idx]+ "_frame");
   const SE3 & framePlacement = SE3::Random();
