@@ -49,6 +49,10 @@ ENDMACRO(ADD_PINOCCHIO_UNIT_TEST)
 # --- RULES -------------------------------------------------------------------
 # --- RULES -------------------------------------------------------------------
 
+# Math components
+ADD_PINOCCHIO_UNIT_TEST(sincos eigen3)
+
+# Pinocchio features
 ADD_PINOCCHIO_UNIT_TEST(tspatial eigen3)
 ADD_PINOCCHIO_UNIT_TEST(symmetric eigen3)
 ADD_PINOCCHIO_UNIT_TEST(aba eigen3)
