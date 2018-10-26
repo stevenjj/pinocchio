@@ -19,6 +19,7 @@
 #ifndef __math_sincos_hpp__
 #define __math_sincos_hpp__
 
+#include "pinocchio/fwd.hpp"
 #include <cmath>
 
 namespace se3
@@ -99,8 +100,6 @@ namespace se3
   };
 
 #ifdef PINOCCHIO_WITH_CPPAD_SUPPORT
-  
-#include <cppad/cppad.hpp>
   
   /// Implementation for CppAD scalar types.
   template<typename Scalar>
