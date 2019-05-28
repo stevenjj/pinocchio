@@ -19,6 +19,8 @@
 #define PINOCCHIO_URDF_WEAK_PTR(type) boost::weak_ptr<type>
 #endif
 
+#include <urdf_world/types.h>
+/*
 #ifndef PINOCCHIO_URDFDOM_TYPEDEF_SHARED_PTR
 
 #define PINOCCHIO_URDF_TYPEDEF_CLASS_POINTER(Class) \
@@ -79,5 +81,6 @@ namespace urdf
 #include <urdf_world/types.h>
 
 #endif // PINOCCHIO_URDFDOM_TYPEDEF_SHARED_PTR
+*/
 
 #endif // ifndef __pinocchio_parsers_urdf_types_hpp__
